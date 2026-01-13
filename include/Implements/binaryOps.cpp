@@ -17,6 +17,7 @@ int binaryOps::decimalToBinary(int n){
 }
 //*------------------------------------------------------------------------------
 
+///Función para convertir número en binario a hexadecimal.
 std::string binaryOps::binaryToHexadecimal(int n){
     return "" + (n - '0');
 }

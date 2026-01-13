@@ -30,7 +30,7 @@ int main(){
             string code;
             string line;
             
-            cout << "Escriba el codigo." << endl << endl;
+            cout << "Escriba el codigo." << endl;
 
             while(true){
                 getline(cin, line);
@@ -42,7 +42,8 @@ int main(){
                 code += line;
                 code.push_back('\n');
             }
-
+            
+            cout << endl;
             readASM::MLC(code);
         }
     }

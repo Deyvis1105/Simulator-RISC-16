@@ -2,37 +2,17 @@
 
 ///Lista enumerada de instrucciones tipo R (Registro-Registro).
 enum instrucctionR {
-    ADD,
-    SUB,
-    AND,
-    ORR,
-    CMP,
-    LSL,
-    LSL,
-    LSR,
-    ASR
+    ADD, SUB, AND, ORR, CMP, LSL, LSL, LSR, ASR
 };
 
 ///Lista enumerada de instrucciones tipo I (inmediato y memoria).
 enum instructionI {
-    ADDI,
-    SUBI,
-    ANDI,
-    ORI,
-    LW,
-    SW
+    ADDI, SUBI, ANDI, ORI, LW, SW
 };
 
 ///Lista enumerada de intrucciones tipo j (control de flujos y saltos).
 enum instructionJ {
-    JMP,
-    BEQ,
-    BNE,
-    BGT,
-    JAL,
-    RET,
-    RETI,
-    HALT
+    JMP, BEQ, BNE, BGT, JAL, RET, RETI, HALT
 };
 
 ///Función para leer archivo .asm
