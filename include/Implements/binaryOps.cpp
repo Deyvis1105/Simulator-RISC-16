@@ -1,5 +1,4 @@
 #include "..\Headers\binaryOps.h"
-#include "binaryOps.h"
 
 //*------------------------------------------------------------------------------
 
@@ -34,6 +33,8 @@ void binaryOps::toLowerText(std::string &instruction){
 void binaryOps::toUpperText(std::string &instruction){
     int lengthInstruction = instruction.length();
     for(int i = 0; i < lengthInstruction; i++){
-        instruction[i] = instruction[i] & 32;
+        if(instruction[i] >= 'a' && instruction[i] <= 'z'){
+            instruction[i] = instruction[i] ^ 32;
+        }
     }
 }

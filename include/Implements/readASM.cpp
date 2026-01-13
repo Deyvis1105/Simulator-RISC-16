@@ -2,7 +2,7 @@
 
 ///Lista enumerada de instrucciones tipo R (Registro-Registro).
 enum instrucctionR {
-    ADD, SUB, AND, ORR, CMP, LSL, LSL, LSR, ASR
+    ADD, SUB, AND, ORR, CMP, LSL, LSR, ASR
 };
 
 ///Lista enumerada de instrucciones tipo I (inmediato y memoria).

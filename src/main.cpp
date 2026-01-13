@@ -36,7 +36,7 @@ int main(){
                 getline(cin, line);
                 binaryOps::toUpperText(line);
                 
-                if(line == "exit")
+                if(line == "EXIT")
                     break;
 
                 code += line;
