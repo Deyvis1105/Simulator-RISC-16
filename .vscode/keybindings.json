@@ -1,0 +1,19 @@
+[
+    {
+        "key": "f6",
+        "command": "workbench.action.tasks.runTask",
+        "args": "GCC: build all",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "f8",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Run: main",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "f5",
+        "command": "workbench.action.debug.start",
+        "when": "editorTextFocus"
+    }
+]
