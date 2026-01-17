@@ -15,4 +15,7 @@ namespace binaryOps {
 
     //*Función para poner en mayúsculas cada caracter de un text.
     void toUpperText(std::string &instruccion);
+
+    //*Función para convertir de hexadecimal a binario.
+    std::string hexTobinary(std::string hex);
 }

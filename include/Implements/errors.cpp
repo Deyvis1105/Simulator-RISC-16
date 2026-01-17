@@ -1,16 +1,28 @@
 #include "..\Headers\errors.h"
+#include "errors.h"
 
 ///Función para verificar errores en el nemónico de la instrucción.
-void errors::verifyNemonico(std::string nemonico, uint8_t &opcode, uint16_t lineNum){
+bool errors::verifyNemonic(std::string nemonico, uint8_t &opcode, uint16_t lineNum){
     if(isInstructionR(nemonico, opcode) || 
         isInstructionI(nemonico, opcode) || 
         isInstructionJ(nemonico, opcode)
         ){
-            return;
+            return true;
         }
     
-    std::string error = "Error en la linea: " + std::to_string(lineNum) + ". Error nemonico.";
-    throw std::runtime_error(error);
+    return false;
+}
+
+///Función para verificar si es una directiva.
+bool errors::isDirectiva(std::string directiva, uint8_t &opcpde){
+    std::string directivas[4] = {".org", ".word", ".space", ".string"};
+    for(int i = 0; i < 4; i++){
+        if(directiva == directivas[i]){
+            opcpde = i+8;
+            return true;
+        }
+    }
+    return false;
 }
 
 ///Función que verifica si una instrucción es de tipo R (Registro).

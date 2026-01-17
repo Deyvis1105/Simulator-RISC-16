@@ -27,18 +27,18 @@ namespace readASM {
     //*Clase para crear objeto c 
     class ArchvASM {
         private:
-            uint16_t memoryMax = 0xffff;
-            uint16_t bankRegister[8] = {0};
-            uint16_t pc_initial;
-            uint16_t pc;
-            
-            std::map<uint16_t, Instruction*> instructions;
-            std::map<std::string, uint16_t> symbolTable;
-
-            Instruction *firstInstruction;
-            Instruction *lastInstruction;
-
+        uint16_t bankRegister[8] = {0};
+        uint16_t pc_initial;
+        uint16_t pc;
+        
+        std::map<uint16_t, Instruction*> instructions;
+        std::map<std::string, uint16_t> symbolTable;
+        
+        Instruction *firstInstruction;
+        Instruction *lastInstruction;
+        
         public:
+            const uint16_t MEMORY_MAX = 0xffff;
             //*Función para agregar una nueva instrucción a la línea de código.
             void addInstruction(Instruction *instruction);
 
@@ -59,17 +59,15 @@ namespace readASM {
     ArchvASM* readArchv(std::string rut);
 
     //*Función para interpretar línea escrita en archivo .asm
-    Instruction* readLine(std::string line);
+    Instruction* readInstruction(uint8_t opcode, std::stringstream& args, uint16_t lineCode);
+
+    //*Función para dividir argumentos por coma.
+    std::vector<std::string> splitArgs(std::stringstream &ss);
 
     //*Función MLC (Maching lenguage code) para generar el archivo de salida en lenguaje máquina.
     void MLC(std::string code);
 
     //*Función para eliminar los comentarios de una línea de un archivo .asm.
     void removeComments(std::string &line);
-                    
-    //*Función para suma de enteros.
-    void add(readASM::Instruction* i, readASM::ArchvASM archv);
 
-    //*Función para resta de enteros.
-    void sub(readASM::Instruction* i, readASM::ArchvASM archv);
 }

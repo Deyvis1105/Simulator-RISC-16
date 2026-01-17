@@ -1,25 +1,36 @@
 #include "..\Headers\readASM.h"
+#include "readASM.h"
 
 //*FUNCIONES VISIBLES Y ESENCIALES PARA LA LECTURA DEL CÓDIGO .ASM.
 //*-----------------------------------------------------------------------------------------------
 
 ///Función para leer archivo .asm
 readASM::ArchvASM* readASM::readArchv(std::string rut){
-    readASM::ArchvASM *archv = new readASM::ArchvASM();
     std::ifstream a(rut);
-    uint16_t pc;
     
     if(a.is_open()){
         readASM::ArchvASM* archv = new readASM::ArchvASM();
-        std::string line = "", codeMCL = "";
+        std::string line = "", codeMCL = "", p;
+        uint16_t pc; uint8_t opcode = 0;
         
         while(getline(a, line)){
-            try{
-                removeComments(line);
-                readLine(line, pc);
-            }catch(std::runtime_error e){
-                delete[] archv;
+            std::stringstream ss(line);
+            //Verifica si la línea está vacía.
+            if(ss.eofbit) continue;
+            removeComments(line);
+
+            ss>>p;
+
+            ///Verifica si la línea de código es una instrucción
+            if(errors::verifyNemonic(p, opcode, pc)){
+                archv->addInstruction(readInstruction(opcode, ss, pc));
             }
+
+            ///Verifica si la línea contiene una directiva.
+            if(errors::isDirectiva(p, opcode)){
+
+            }
+
             //...
         }
 
@@ -31,18 +42,24 @@ readASM::ArchvASM* readASM::readArchv(std::string rut){
 }
 
 ///Función para interpretar línea de un archivo .asmDime
-readASM::Instruction* readASM::readLine(std::string line, uint16_t lineCode){
+readASM::Instruction* readASM::readInstruction(uint8_t opcode, std::stringstream& args, uint16_t lineCode){
     readASM::Instruction* instruction;
-    std::stringstream ss(line);
     std::string p;
-    uint8_t opcode = 0;
-    ss >> p;
 
-    if(p[0] != '.' && p[p.length() - 1] != ':'){
-        errors::verifyNemonico(p, opcode, lineCode);
+    
+    //... validar los argumentos (valores y rangos).
+}
+
+///Función para dividir los argumentos de las comas.
+std::vector<std::string> readASM::splitArgs(std::stringstream &ss){
+    std::vector<std::string> args;
+    std::string p;
+    
+    while(std::getline(ss, p, ',')){
+        args.push_back(p);
     }
 
-    //... validar los argumentos (valores y rangos).
+    return std::vector<std::string>();
 }
 
 ///Función para generar el archivo de salida en lenguaje máquina.
