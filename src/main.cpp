@@ -11,7 +11,7 @@ int main(){
     while(operation != 3){
 
         ///Menú para elegir que opción la entrada a elegir.
-        cout << "1.Leer un archivo .asm" << endl;
+        cout << "1.Leer archivo .asm" << endl;
         cout << "2.Leer instrucciones linea por linea" << endl;
         cout << "3.Salir" << endl << endl;
         cout << "opcion: "; cin >> operation;
@@ -35,10 +35,12 @@ int main(){
             while(true){
                 getline(cin, line);
                 binaryOps::toUpperText(line);
+                readASM::removeComments(line);
                 
                 if(line == "EXIT")
                     break;
-
+                    
+                
                 code += line;
                 code.push_back('\n');
             }

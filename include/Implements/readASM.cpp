@@ -1,73 +1,127 @@
 #include "..\Headers\readASM.h"
 
-///Función para leer archivo .asm
-void readASM::readArchv(std::string rut){
-    std::ifstream a(rut);
+//*FUNCIONES VISIBLES Y ESENCIALES PARA LA LECTURA DEL CÓDIGO .ASM.
+//*-----------------------------------------------------------------------------------------------
 
+///Función para leer archivo .asm
+readASM::ArchvASM* readASM::readArchv(std::string rut){
+    readASM::ArchvASM *archv = new readASM::ArchvASM();
+    std::ifstream a(rut);
+    uint16_t pc;
+    
     if(a.is_open()){
-        std::string line = "", code = "", p;
-        int count = 0;
+        readASM::ArchvASM* archv = new readASM::ArchvASM();
+        std::string line = "", codeMCL = "";
+        
         while(getline(a, line)){
-            std::stringstream ss(line);
-            while(ss >> p){
-                
+            try{
+                removeComments(line);
+                readLine(line, pc);
+            }catch(std::runtime_error e){
+                delete[] archv;
             }
-            count = 0;
+            //...
         }
+
         a.close();
+        return archv;
     }
+
+    return nullptr;
 }
 
-///Función para interpretar línea de un archivo .asm
-void readASM::readInstruction(std::string line){
+///Función para interpretar línea de un archivo .asmDime
+readASM::Instruction* readASM::readLine(std::string line, uint16_t lineCode){
+    readASM::Instruction* instruction;
     std::stringstream ss(line);
     std::string p;
+    uint8_t opcode = 0;
+    ss >> p;
 
-    while(ss >> p){
-
+    if(p[0] != '.' && p[p.length() - 1] != ':'){
+        errors::verifyNemonico(p, opcode, lineCode);
     }
+
+    //... validar los argumentos (valores y rangos).
 }
 
 ///Función para generar el archivo de salida en lenguaje máquina.
 void readASM::MLC(std::string code){
     std::ofstream archv("output.txt");
 
-    if(archv.is_open()){
-        int lengthCode = code.length();
-        for(int i = 0; i < lengthCode; i++){
-            archv << code[i];
-        }
+    // if(archv.is_open()){
+    //     int lengthCode = code.length();
+    //     for(int i = 0; i < lengthCode; i++){
+    //         archv << code[i];
+    //     }
+    // }else{
+    //     std::cout << "Error en la generacion del archivo de salida." << std::endl << std::endl;
+    // }
+}
+
+///Función para eliminar comentarios # o ;.
+void readASM::removeComments(std::string &line){
+    std::stringstream ss(line);
+    std::string result = "", p;
+
+    while(ss >> p){
+        if(p[0] == '#' || p[0] == ';')
+            break;
+    }
+
+    line = result;
+}
+
+//*-----------------------------------------------------------------------------------------------
+
+//*FUNCIONES EXTENDIDAS DE LA CLASE "ArchvASM".
+//*-----------------------------------------------------------------------------------------------
+
+///Función de la clase ArchvASM.
+///Esta función sirve para añadir una nueva instrucción a la línea de código. 
+void readASM::ArchvASM::addInstruction(Instruction *instruction){
+    instruction->direction = pc;
+
+    instructions[pc] = instruction;
+
+    if(firstInstruction == nullptr){
+        firstInstruction = instruction;
+        lastInstruction = instruction;
     }else{
-        std::cout << "Error en la generacion del archivo de salida." << std::endl << std::endl;
+        lastInstruction->nextInstruction = instruction;
+        instruction->previousInstruction = lastInstruction;
+        lastInstruction = instruction;
+    }
+
+    pc++;
+}
+
+///Función de la clase ArchvASM
+///Está función sirve par aañadir una nueva etiqueta a la tabla de símbolos.
+void readASM::ArchvASM::addLabel(std::string label){
+    symbolTable[label] = pc;
+}
+
+///Función de la clase ArchvASM.
+///Esta función sirve para obtener una instrucción con la dirección de memoria de la misma.
+readASM::Instruction* readASM::ArchvASM::jumpToDirection(uint16_t direction){
+    if(instructions.find(direction) != instructions.end()){
+        return instructions[direction];
+    }
+    return nullptr;
+}
+
+///Función de la clase ArchvASM.
+///Función para manejar el .org.
+void readASM::ArchvASM::seLocationPC(uint16_t pc){
+    this->pc = pc;
+}
+
+///Función para eliminar memoria reservada dinámicamente.
+readASM::ArchvASM::~ArchvASM(){
+    for(auto a : instructions){
+        delete[]a.second;
     }
 }
 
-///Lista enumerada de instrucciones tipo R (Registro-Registro).
-int instructionR(std::string instruction){
-    std::string iR[8] = {"ADD", "SUB", "AND", "ORR", "CMP", "LSL", "LSR", "ASR"};
-    for(int i = 0; i < 8; i++){
-        if(instruction == iR[i])
-            return i;
-    }
-    return -1;
-}
-
-///Lista enumerada de instrucciones tipo I (inmediato y memoria).
-int instructionI(std::string instruction){
-    std::string iI[6] = {"ADDI", "SUBI", "ANDI", "ORI", "LW", "SW"};
-    for(int i = 0; i < 6; i++){
-        if(iI[i] == instruction)
-            return i;
-    }
-    return -1;
-}
-
-///Lista enumerada de intrucciones tipo j (control de flujos y saltos).
-int instructionJ(std::string instruction){
-    std::string iJ[8] = {"JMP", "BEQ", "BNE", "BGT", "JAL", "RET", "RETI", "HALT"};
-    for(int i = 0; i < 8; i++){
-        if(iJ[i] == instruction)
-            return i;
-    }
-    return -1;
-}
+//*-----------------------------------------------------------------------------------------------
