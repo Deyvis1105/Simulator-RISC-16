@@ -1,24 +1,23 @@
 #include "..\Headers\errors.h"
-#include "errors.h"
 
 ///Función para verificar errores en el nemónico de la instrucción.
-bool errors::verifyNemonic(std::string nemonico, uint8_t &opcode, uint16_t lineNum){
-    if(isInstructionR(nemonico, opcode) || 
-        isInstructionI(nemonico, opcode) || 
-        isInstructionJ(nemonico, opcode)
+void errors::verifyNemonic(std::string nemonico, unsigned int lineCount, uint8_t &opCode){
+    if(isInstructionR(nemonico, opCode) || 
+        isInstructionI(nemonico, opCode) || 
+        isInstructionJ(nemonico, opCode)
         ){
-            return true;
+            return;
         }
     
-    return false;
+    throw std::runtime_error("Instruccion desconocida en la linea: " + std::to_string(lineCount) + ".");
 }
 
 ///Función para verificar si es una directiva.
-bool errors::isDirectiva(std::string directiva, uint8_t &opcpde){
+bool errors::isDirectiva(std::string &directiva){
     std::string directivas[4] = {".org", ".word", ".space", ".string"};
     for(int i = 0; i < 4; i++){
         if(directiva == directivas[i]){
-            opcpde = i+8;
+            directiva = directiva.substr(1, directiva.length());
             return true;
         }
     }
@@ -26,18 +25,28 @@ bool errors::isDirectiva(std::string directiva, uint8_t &opcpde){
 }
 
 ///Función que verifica si una instrucción es de tipo R (Registro).
-static bool isInstructionR(std::string instruction, uint8_t &opcode){
+void errors::isValidRegister(std::vector<std::string> & args, unsigned int lineCode){
+    size_t length = args.size();
+    for(size_t i = 0; i < length; i++){
+        if(args[i][0] == 'R')
+            if(!(args[i][1] >= '0' && args[i][1] <= '7'))
+                throw std::runtime_error("Error en la linea " + std::to_string(lineCode) + ". Registro no existente.");
+    }
+}
+
+bool errors::isInstructionR(std::string nemonic, uint8_t &opCode){
+
     std::string iR[8] = {"ADD", "SUB", "AND", "ORR", "CMP", "LSL", "LSR", "ASR"};
 
     ///Verifica nemónicos incorporados.
-    if(instruction == "MOV" || instruction == "IMOV" || instruction == "NOP"){
-        opcode = 0;
+    if(nemonic == "MOV" || nemonic == "IMOV" || nemonic == "NOP"){
+        opCode = 0;
         return true;
     }
 
     for(int i = 0; i < 8; i++){
-        if(instruction == iR[i]){
-            opcode = i;
+        if(nemonic == iR[i]){
+            opCode = i;
             return true;
         }
     }
@@ -45,23 +54,25 @@ static bool isInstructionR(std::string instruction, uint8_t &opcode){
 }
 
 ///Función que verifica si una instrucción es de tipo I (inmediato y memoria)
-static bool isInstructionI(std::string instruction, uint8_t &opcode){
+bool errors::isInstructionI(std::string nemonic, uint8_t &opCode){
     std::string iI[6] = {"ADDI", "SUBI", "ANDI", "ORI", "LW", "SW"};
     for(int i = 0; i < 6; i++){
-        if(iI[i] == instruction)
-            opcode = i;
+        if(iI[i] == nemonic){
+            opCode = i + 8;
             return true;
+        }
     }
     return false;
 }
 
 ///Función que verifica si una instrucción es de tipo J (control de flujos y saltos).
-static bool isInstructionJ(std::string instruction, uint8_t &opcode){
+bool errors::isInstructionJ(std::string nemonic, uint8_t &opCode){
     std::string iJ[8] = {"JMP", "BEQ", "BNE", "BGT", "JAL", "RET", "RETI", "HALT"};
     for(int i = 0; i < 8; i++){
-        if(iJ[i] == instruction)
-            opcode = i;
+        if(iJ[i] == nemonic){
+            opCode = i + 6;
             return true;
+        }
     }
     return false;
 }

@@ -21,8 +21,15 @@ int main(){
             string rut;
             cout << "Ingrese la ruta del archivo: "; cin >> rut;
 
-            ///Lee el archivo
-            readASM::readArchv(rut);
+            readASM::ArchvASM* archv = readASM::readArchv(rut);
+
+            if(archv == nullptr)
+                continue;
+
+            //Falta por implementar aquí
+            //...
+
+            delete archv;
         }
 
         ///Leerá línea por línea introducida por la terminal
@@ -30,25 +37,11 @@ int main(){
             string code;
             string line;
             
-            cout << "Escriba el codigo." << endl;
-
-            while(true){
-                getline(cin, line);
-                binaryOps::toUpperText(line);
-                readASM::removeComments(line);
-                
-                if(line == "EXIT")
-                    break;
-                    
-                
-                code += line;
-                code.push_back('\n');
-            }
-            
-            cout << endl;
-            readASM::MLC(code);
+            //Falta por implementar aquí
+            //...
         }
     }
     
+    system("pause");
     return 0;
 }

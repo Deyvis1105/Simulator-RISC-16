@@ -74,7 +74,7 @@
         {
             "label": "Run: main",
             "type": "shell",
-            "command": "${workspaceFolder}\\src\\output\\main.exe",
+            "command": "${workspaceFolder}\\src\\main.exe",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -94,7 +94,7 @@
                 "${workspaceFolder}\\include\\Implements\\*.cpp",
                 "-I${workspaceFolder}\\include",
                 "-o",
-                "${fileDirname}\\output\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
                 "cwd": "${fileDirname}"

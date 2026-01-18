@@ -1,55 +1,68 @@
-#pragma once
+#ifndef READASM_H
+#define READASM_H
 #include <iostream>
 #include <string>
 #include <cstdint>
 #include <fstream>
 #include <sstream>
-#include "binaryOps.h"
-#include "errors.h"
 #include <vector>
 #include <map>
+#include "binaryOps.h"
+#include "errors.h"
 
 namespace readASM {
     //*Estructura que contiene una línea de cada instrucción y que además, cada
     //*estrutura apunta a la siguiente y a la anterior.
     struct Instruction{
-        uint8_t opCode;
         uint16_t direction;
-        uint16_t rds[3] = {};
-        std::string nemonico;
-        std::vector<std::string> args;
-        char typeInstruction;
+        uint8_t opCode;
+        std::string label;
+        std::string nemonic;
+        std::vector<std::string> args = {};
+        
+        uint16_t machineCode;
+        std::string originalCode;
+        bool isDirective = false; 
 
-        Instruction *nextInstruction;
-        Instruction *previousInstruction;
-    };
+        Instruction *nextInstruction = nullptr;
+        Instruction *previousInstruction = nullptr;
+};
 
-    //*Clase para crear objeto c 
+    //*Clase para crear objeto c
     class ArchvASM {
         private:
-        uint16_t bankRegister[8] = {0};
-        uint16_t pc_initial;
-        uint16_t pc;
-        
-        std::map<uint16_t, Instruction*> instructions;
-        std::map<std::string, uint16_t> symbolTable;
-        
-        Instruction *firstInstruction;
-        Instruction *lastInstruction;
+            bool flags[4] = {false};
+            int16_t bankRegister[8] = {0};
+            uint16_t pc = 0;
+            uint16_t pcMax = 0;
+            
+            std::map<uint16_t, Instruction*> instructions;
+            std::map<std::string, uint16_t> symbolTable;
+            
+            Instruction *firstInstruction = nullptr;
+            Instruction *lastInstruction = nullptr;
         
         public:
+            const uint16_t pc_initial = 0;
             const uint16_t MEMORY_MAX = 0xffff;
+
+            //*Constructor de la clase Archv.
+            ArchvASM(){};
+
             //*Función para agregar una nueva instrucción a la línea de código.
-            void addInstruction(Instruction *instruction);
+            void addInstruction(Instruction *instruction, uint16_t pc);
 
             //*Función para agregar una nuevo etiqueta.
-            void addLabel(std::string label);
+            void addLabel(std::string label, uint16_t pc);
 
             //*Función para hacer un salto a una instrucción.
             Instruction* jumpToDirection(uint16_t direction);
 
             //*Función para localizar la memoria mediante el .org
             void seLocationPC(uint16_t pc);
+
+            //*Función para ejecutar el programa.
+            void executeProgram();
 
             //*Función para eliminar memoria una vez terminado el programa.
             ~ArchvASM();
@@ -59,7 +72,13 @@ namespace readASM {
     ArchvASM* readArchv(std::string rut);
 
     //*Función para interpretar línea escrita en archivo .asm
-    Instruction* readInstruction(uint8_t opcode, std::stringstream& args, uint16_t lineCode);
+    Instruction* readLine(
+        std::string nemonic, 
+        std::stringstream &args, 
+        uint16_t pc, 
+        unsigned int lineCount, 
+        std::string &label
+    );
 
     //*Función para dividir argumentos por coma.
     std::vector<std::string> splitArgs(std::stringstream &ss);
@@ -71,3 +90,5 @@ namespace readASM {
     void removeComments(std::string &line);
 
 }
+
+#endif

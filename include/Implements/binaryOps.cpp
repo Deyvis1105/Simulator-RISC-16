@@ -2,7 +2,7 @@
 
 ///Función recursiva utilizada por decimalToBinary para convertir número entero
 ///sin signo a binario.
-int DTBR(int n){
+static int DTBR(int n){
     if(n <= 0) return 1;
     return DTBR(n / 2) * 10 + n % 10;
 }
@@ -13,7 +13,8 @@ int binaryOps::decimalToBinary(int n){
     return n;
 }
 
-std::string hexABinario(std::string hex) {
+///Función para co
+std::string binaryOps::hexTobinary(std::string hex){
     std::string resultado = "";
 
     // si el usuario puso el "0x" al principio, lo volamos para quedarnos solo con el número.
@@ -50,6 +51,18 @@ std::string hexABinario(std::string hex) {
     return resultado;
 }
 
+int16_t binaryOps::sum(int16_t a, int16_t b, bool &overflow){
+    int16_t result = a + b;
+
+    if((a < 0 && b < 0) && result > 0)
+        overflow = true;
+    else if((a > 0 && b > 0) && result < 0)
+        overflow = true;
+    else
+        overflow = false;
+        
+    return result;
+}
 ///Función para poner en minusculas cada caracter de un texto.
 void binaryOps::toLowerText(std::string &instruction){
     int lengthInstruction = instruction.length();

@@ -1,6 +1,8 @@
-#pragma once
+#ifndef BINARYOPS_H
+#define BINARYOPS_H
 #include <iostream>
 #include <string>
+#include <cstdint>
 
 
 namespace binaryOps {
@@ -18,4 +20,9 @@ namespace binaryOps {
 
     //*Función para convertir de hexadecimal a binario.
     std::string hexTobinary(std::string hex);
+
+    //*Función para sumar dos enteros con signo con un tamaño de 16 bits.
+    int16_t sum(int16_t a, int16_t b, bool &overflow);
 }
+
+#endif
